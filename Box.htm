@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+		<script type="module">
+			import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+
+			const scene = new THREE.Scene();//crear escena
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );//crear camara
+
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+//Agregar luz direccional con parametro de color de luz e intensidad
+            const directionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+            scene.add( directionalLight );
+//arreglo de arreglos con las dimensiones de cada  [ancho, alto, profundo] 
+            const dim = [[1,1,1], [2,2,2], [1.5,1.5,1.5]];
+            var geometria = []; //arreglo vacio para la geometria
+            for (let i=0; i<3; i++) {
+                geometria.push(new THREE.BoxGeometry(dim[i][0], dim[i][1], dim[i][2]));
+            }
+//arreglo de color hexadecimal
+            const color = [{color:0xAA0000}, {color:0x00AA00}, {color:0x0000AA}];
+            const material=[new THREE.MeshMatcapMaterial(color[0]), new THREE.MeshToonMaterial(color[1]), new THREE.MeshPhysicalMaterial(color[2])];//Arreglo de materiales
+ //arreglo para llenar con la construccion de los cubos           
+            const cube =[];
+            for (let i=0; i<3; i++) {
+                cube.push(new THREE.Mesh(geometria[i], material[i]));
+            }
+//agregar los cubos a la escena
+            for (let i=0; i<3; i++) {
+                scene.add( cube[i] );
+            }
+			//traslacion de los cubos 3 unidades desde el origen sobre el eje x
+            cube[1].position.x = 3;
+            cube[2].position.x = -3;
+
+
+			camera.position.z = 5;
+//Animacion de la rotacion de cada cubo sobre su centro en el eje x y eje y en velocidad 0.01
+			function animate() {
+				requestAnimationFrame( animate );
+
+				cube[0].rotation.x += 0.01;
+				cube[1].rotation.x += 0.01;
+                cube[2].rotation.x += 0.05;
+                cube[0].rotation.y += 0.05;
+				cube[1].rotation.y += 0.02;
+                cube[2].rotation.y += 0.02;
+
+				renderer.render( scene, camera );
+			}
+
+			animate();
+		</script>
+	</body>
+</html>
